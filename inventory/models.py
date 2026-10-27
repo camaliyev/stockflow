@@ -40,6 +40,10 @@ class Product(models.Model):
             ),
         ]
 
+    @property
+    def is_low_stock(self):
+        return self.stock_quantity <= self.low_stock_threshold
+
     def __str__(self):
         return self.name
 

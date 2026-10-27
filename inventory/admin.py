@@ -12,7 +12,12 @@ class ProductAdmin(admin.ModelAdmin):
         "category",
         "price",
         "stock_quantity",
+        "low_stock",
         "is_active",
     )
     search_fields = ("name", "sku")
     list_filter = ("category", "is_active")
+
+    @admin.display(boolean=True, description="Low Stock")
+    def low_stock(self, obj):
+        return obj.is_low_stock
