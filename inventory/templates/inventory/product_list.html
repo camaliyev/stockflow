@@ -6,6 +6,9 @@
 </head>
 <body>
     <h1>StockFlow — Products</h1>
+    <p>
+        <a href="{% url 'inventory:product_create' %}">Add product</a>
+    </p> 
 
     <form method="get" action="{% url 'inventory:product_list' %}">
         <label for="search">Search products:</label>

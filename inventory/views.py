@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 
 from .models import Category, Product
+from .forms import ProductForm
 
 @login_required(login_url="/admin/login/")
 def product_list(request):
@@ -47,4 +48,21 @@ def product_detail(request, pk):
         request,
         "inventory/product_detail.html",
         {"product": product},
+    )
+
+@login_required(login_url="/admin/login/")
+def product_create(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+
+        if form.is_valid():
+            product = form.save()
+            return redirect("inventory:product_detail", pk=product.pk)
+    else:
+        form = ProductForm()
+
+    return render(
+        request,
+        "inventory/product_form.html",
+        {"form": form},
     )
