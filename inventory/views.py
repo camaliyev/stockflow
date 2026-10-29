@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
 from .models import Category, Product
@@ -34,4 +34,17 @@ def product_list(request):
             "categories": categories,
             "selected_category": selected_category,
         },
+    )
+
+@login_required(login_url="/admin/login/")
+def product_detail(request, pk):
+    product = get_object_or_404(
+        Product.objects.select_related("category"),
+        pk=pk
+    )
+
+    return render(
+        request,
+        "inventory/product_detail.html",
+        {"product": product},
     )

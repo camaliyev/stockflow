@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | StockFlow</title>
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+
+    <p><strong>SKU:</strong> {{ product.sku }}</p>
+    <p><strong>Category:</strong> {{ product.category.name }}</p>
+    <p><strong>Price:</strong> ${{ product.price|floatformat:2 }}</p>
+    <p><strong>Stock quantity:</strong> {{ product.stock_quantity }}</p>
+    <p><strong>Low stock threshold:</strong> {{ product.low_stock_threshold }}</p>
+
+    <p>
+        <strong>Stock status:</strong>
+        {% if product.is_low_stock %}
+            Low stock
+        {% else %}
+            In stock
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Active:</strong>
+        {{ product.is_active|yesno:"Yes,No" }}
+    </p>
+
+    <a href="{% url 'inventory:product_list' %}">Back to products</a>
+</body>
+</html>
