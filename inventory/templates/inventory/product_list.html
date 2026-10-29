@@ -6,6 +6,18 @@
 </head>
 <body>
     <h1>StockFlow — Products</h1>
+    <form method="get" action="{% url 'inventory:product_list' %}">
+    <label for="search">Search products:</label>
+    <input
+        type="text"
+        id="search"
+        name="q"
+        value="{{ search_query }}"
+        placeholder="Enter a name or SKU"
+    >
+    <button type="submit">Search</button>
+    <a href="{% url 'inventory:product_list' %}">Clear</a>
+</form>
 
     <table>
         <thead>
