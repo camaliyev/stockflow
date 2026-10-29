@@ -6,18 +6,35 @@
 </head>
 <body>
     <h1>StockFlow — Products</h1>
+
     <form method="get" action="{% url 'inventory:product_list' %}">
-    <label for="search">Search products:</label>
-    <input
-        type="text"
-        id="search"
-        name="q"
-        value="{{ search_query }}"
-        placeholder="Enter a name or SKU"
-    >
-    <button type="submit">Search</button>
-    <a href="{% url 'inventory:product_list' %}">Clear</a>
-</form>
+        <label for="search">Search products:</label>
+        <input
+            type="text"
+            id="search"
+            name="q"
+            value="{{ search_query }}"
+            placeholder="Enter a name or SKU"
+        >
+
+        <label for="category">Category:</label>
+        <select id="category" name="category">
+            <option value="">All categories</option>
+
+            {% for category in categories %}
+                <option
+                    value="{{ category.pk }}"
+                    {% if category.pk == selected_category.pk %}selected{% endif %}
+                >
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Search</button>
+        <a href="{% url 'inventory:product_list' %}">Clear</a>
+    </form>
+
 
     <table>
         <thead>
