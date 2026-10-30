@@ -44,10 +44,15 @@ def product_detail(request, pk):
         pk=pk
     )
 
+    stock_movements = product.stock_movements.select_related("created_by")
+
     return render(
         request,
         "inventory/product_detail.html",
-        {"product": product},
+        {
+            "product": product, 
+            "stock_movements": stock_movements
+        },
     )
 
 @login_required(login_url="/admin/login/")
