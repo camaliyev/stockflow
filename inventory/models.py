@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -48,4 +49,30 @@ class Product(models.Model):
         return self.name
 
 
-    
+
+class StockMovement(models.Model):
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.PROTECT,
+        related_name="stock_movements",
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="stock_movements",
+    )
+    quantity_change = models.IntegerField()
+    reason = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-pk"]
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(quantity_change=0),
+                name="stock_movement_quantity_nonzero",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.product.name}: {self.quantity_change:+d}"
