@@ -27,7 +27,11 @@
         <strong>Active:</strong>
         {{ product.is_active|yesno:"Yes,No" }}
     </p>
-
+    <p>
+        <a href="{% url 'inventory:product_update' pk=product.pk %}">
+        Edit product
+        </a>
+    </p>
     <a href="{% url 'inventory:product_list' %}">Back to products</a>
 </body>
 </html>

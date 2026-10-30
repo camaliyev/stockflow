@@ -66,3 +66,25 @@ def product_create(request):
         "inventory/product_form.html",
         {"form": form},
     )
+
+@login_required(login_url="/admin/login/")
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+
+        if form.is_valid():
+            form.save()
+            return redirect("inventory:product_detail", pk=product.pk)
+    else:
+        form = ProductForm(instance=product)
+
+    return render(
+        request,
+        "inventory/product_form.html",
+        {
+            "form": form,
+            "product": product,
+        },
+    )

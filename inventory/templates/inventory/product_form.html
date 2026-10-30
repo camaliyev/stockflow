@@ -3,19 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add product | StockFlow</title>
+    <title>
+        {% if product %}Edit product{% else %}Add product{% endif %} | StockFlow
+    </title>
 </head>
 <body>
-    <h1>Add product</h1>
+    <h1>
+        {% if product %}
+            Edit {{ product.name }}
+        {% else %}
+            Add product
+        {% endif %}
+    </h1>
 
-    <form method="post" action="{% url 'inventory:product_create' %}">
+    <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
 
         <button type="submit">Save product</button>
     </form>
 
-    <a href="{% url 'inventory:product_list' %}">Cancel</a>
+    {% if product %}
+        <a href="{% url 'inventory:product_detail' pk=product.pk %}">Cancel</a>
+    {% else %}
+        <a href="{% url 'inventory:product_list' %}">Cancel</a>
+    {% endif %}
 </body>
 </html>
