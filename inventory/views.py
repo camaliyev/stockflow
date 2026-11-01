@@ -3,7 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 
 from .models import Category, Product
-from .forms import ProductForm
+from .forms import ProductForm, StockAdjustmentForm
+
+from django.core.exceptions import ValidationError
+from .services import adjust_stock
 
 @login_required(login_url="/admin/login/")
 def product_list(request):
@@ -91,5 +94,39 @@ def product_update(request, pk):
         {
             "form": form,
             "product": product,
+        },
+    )
+
+@login_required(login_url="/admin/login/")
+def stock_adjustment(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+
+    if request.method == "POST":
+        form = StockAdjustmentForm(request.POST)
+
+        if form.is_valid():
+            try:
+                adjust_stock(
+                    product_id=product.pk,
+                    quantity_change=form.cleaned_data["quantity_change"],
+                    reason=form.cleaned_data["reason"],
+                    user=request.user,
+                )
+            except ValidationError as error:
+                form.add_error(None, error)
+            else:
+                return redirect(
+                    "inventory:product_detail",
+                    pk=product.pk,
+                )
+    else:
+        form = StockAdjustmentForm()
+
+    return render(
+        request,
+        "inventory/stock_adjustment.html",
+        {
+            "product": product,
+            "form": form,
         },
     )

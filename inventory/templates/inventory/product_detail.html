@@ -27,6 +27,11 @@
         <strong>Active:</strong>
         {{ product.is_active|yesno:"Yes,No" }}
     </p>
+    <p>
+        <a href="{% url 'inventory:stock_adjustment' pk=product.pk %}">
+            Adjust stock
+        </a>
+    </p>
     <h2>Stock history</h2>
 
     <table>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adjust stock | StockFlow</title>
+</head>
+<body>
+    <h1>Adjust stock: {{ product.name }}</h1>
+
+    <p>Current stock: {{ product.stock_quantity }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Save adjustment</button>
+    </form>
+
+    <a href="{% url 'inventory:product_detail' pk=product.pk %}">
+        Cancel
+    </a>
+</body>
+</html>
