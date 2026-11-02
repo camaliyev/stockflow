@@ -25,3 +25,6 @@ def adjust_stock(*, product_id, quantity_change, reason, user):
 
     product.stock_quantity = new_quantity
     product.save(update_fields=["stock_quantity"])
+
+    movement.save()
+    return movement
