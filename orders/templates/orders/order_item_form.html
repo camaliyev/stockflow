@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add item | StockFlow</title>
+</head>
+<body>
+    <h1>Add item to Order #{{ order.pk }}</h1>
+
+    <p>Customer: {{ order.customer_name }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Add item</button>
+    </form>
+
+    <p>
+        <a href="{% url 'orders:order_detail' order.pk %}">
+            Back to order
+        </a>
+    </p>
+</body>
+</html>

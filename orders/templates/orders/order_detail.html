@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order #{{ order.pk }} | StockFlow</title>
+</head>
+<body>
+    <h1>Order #{{ order.pk }}</h1>
+
+    <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+    <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+    <p><strong>Created by:</strong> {{ order.created_by.username }}</p>
+    <p>
+        <strong>Created at:</strong>
+        {{ order.created_at|date:"Y-m-d H:i" }}
+    </p>
+    {% if order.status == "draft" %}
+    <p>
+        <a href="{% url 'orders:order_item_add' order.pk %}">
+            Add item
+        </a>
+    </p>
+    {% endif %}
+
+    <h2>Order items</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.unit_price|floatformat:2 }}</td>
+                    <td>${{ item.subtotal|floatformat:2 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No items added yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        <a href="{% url 'orders:order_create' %}">
+            Create another order
+        </a>
+    </p>
+    <p>
+        <a href="{% url 'inventory:product_list' %}">
+            Back to products
+        </a>
+    </p>
+</body>
+</html>
