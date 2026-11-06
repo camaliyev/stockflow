@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from .services import add_order_item
-from .forms import OrderForm, OrderItemForm
-from .models import Order
+from .services import add_order_item, update_order_item_quantity
+from .forms import OrderForm, OrderItemForm, OrderItemQuantityForm
+from .models import Order, OrderItem
 
 @login_required(login_url="/admin/login/")
 def order_create(request):
@@ -69,6 +69,45 @@ def order_item_add(request, pk):
         "orders/order_item_form.html",
         {
             "order": order,
+            "form": form,
+        },
+    )
+
+
+@login_required(login_url="/admin/login/")
+def order_item_update(request, pk, item_id):
+    order = get_object_or_404(Order, pk=pk)
+    item = get_object_or_404(
+        OrderItem.objects.select_related("product"),
+        pk=item_id,
+        order=order,
+    )
+
+    if request.method == "POST":
+        form = OrderItemQuantityForm(request.POST)
+
+        if form.is_valid():
+            try:
+                update_order_item_quantity(
+                    order_id=order.pk,
+                    item_id=item.pk,
+                    quantity=form.cleaned_data["quantity"],
+                )
+            except ValidationError as error:
+                form.add_error(None, error)
+            else:
+                return redirect("orders:order_detail", pk=order.pk)
+    else:
+        form = OrderItemQuantityForm(
+            initial={"quantity": item.quantity},
+        )
+
+    return render(
+        request,
+        "orders/order_item_quantity_form.html",
+        {
+            "order": order,
+            "item": item,
             "form": form,
         },
     )

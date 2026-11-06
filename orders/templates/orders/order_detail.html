@@ -37,7 +37,15 @@
             {% for item in items %}
                 <tr>
                     <td>{{ item.product.name }}</td>
-                    <td>{{ item.quantity }}</td>
+                    <td>
+                        {{ item.quantity }}
+
+                        {% if order.status == "draft" %}
+                            <a href="{% url 'orders:order_item_update' order.pk item.pk %}">
+                                Edit quantity
+                             </a>
+                        {% endif %}
+                    </td>
                     <td>${{ item.unit_price|floatformat:2 }}</td>
                     <td>${{ item.subtotal|floatformat:2 }}</td>
                 </tr>

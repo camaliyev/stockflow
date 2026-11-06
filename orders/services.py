@@ -32,3 +32,24 @@ def add_order_item(*, order_id, product_id, quantity):
     item.save()
 
     return item
+
+@transaction.atomic
+def update_order_item_quantity(*, order_id, item_id, quantity):
+    order = Order.objects.select_for_update().get(pk=order_id)
+
+    if order.status != Order.Status.DRAFT:
+        raise ValidationError("Only draft orders can be edited.")
+
+    if quantity < 1:
+        raise ValidationError("Quantity must be at least one.")
+
+    item = OrderItem.objects.get(
+        pk=item_id,
+        order=order,
+    )
+
+    item.quantity = quantity
+    item.full_clean()
+    item.save(update_fields=["quantity"])
+
+    return item

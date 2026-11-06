@@ -14,3 +14,9 @@ class OrderItemForm(forms.Form):
         queryset=Product.objects.filter(is_active=True),
     )
     quantity = forms.IntegerField(min_value=1)
+
+class OrderItemQuantityForm(forms.Form):
+    quantity = forms.IntegerField(
+        min_value=1,
+        label="New quantity",
+    )
