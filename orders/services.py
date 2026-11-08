@@ -53,3 +53,17 @@ def update_order_item_quantity(*, order_id, item_id, quantity):
     item.save(update_fields=["quantity"])
 
     return item
+
+@transaction.atomic
+def remove_order_item(*, order_id, item_id):
+    order = Order.objects.select_for_update().get(pk=order_id)
+
+    if order.status != Order.Status.DRAFT:
+        raise ValidationError("Only draft orders can be edited.")
+
+    item = OrderItem.objects.get(
+        pk=item_id,
+        order=order,
+    )
+
+    item.delete()

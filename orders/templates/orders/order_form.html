@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create order | StockFlow</title>
+</head>
+<body>
+    <h1>Create draft order</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Create order</button>
+    </form>
+
+    <p>
+        <a href="{% url 'inventory:product_list' %}">
+            Back to products
+        </a>
+    </p>
+</body>
+</html>

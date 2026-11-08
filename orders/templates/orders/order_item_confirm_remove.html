@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Remove item | StockFlow</title>
+</head>
+<body>
+    <h1>Remove item from Order #{{ order.pk }}</h1>
+
+    <p>
+        Remove {{ item.product.name }}
+        (quantity: {{ item.quantity }}) from this order?
+    </p>
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm removal</button>
+    </form>
+
+    <p>
+        <a href="{% url 'orders:order_detail' order.pk %}">
+            Cancel
+        </a>
+    </p>
+</body>
+</html>

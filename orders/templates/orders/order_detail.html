@@ -44,6 +44,9 @@
                             <a href="{% url 'orders:order_item_update' order.pk item.pk %}">
                                 Edit quantity
                              </a>
+                             <a href="{% url 'orders:order_item_remove' order.pk item.pk %}">
+                                 Remove item
+                            </a>
                         {% endif %}
                     </td>
                     <td>${{ item.unit_price|floatformat:2 }}</td>
