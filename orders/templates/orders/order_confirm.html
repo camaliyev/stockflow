@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm order | StockFlow</title>
+</head>
+<body>
+    <h1>Confirm Order #{{ order.pk }}</h1>
+
+    <p>Customer: {{ order.customer_name }}</p>
+    <p>Confirming this order will subtract its quantities from stock.</p>
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm order</button>
+    </form>
+
+    <p>
+        <a href="{% url 'orders:order_detail' order.pk %}">
+            Back to order
+        </a>
+    </p>
+</body>
+</html>

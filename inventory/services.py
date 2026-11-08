@@ -4,7 +4,7 @@ from django.db import transaction
 from .models import Product, StockMovement
 
 @transaction.atomic
-def adjust_stock(*, product_id, quantity_change, reason, user):
+def adjust_stock(*, product_id, quantity_change, reason, user, order=None):
     product = Product.objects.select_for_update().get(pk=product_id)
 
     if quantity_change == 0:
@@ -17,6 +17,7 @@ def adjust_stock(*, product_id, quantity_change, reason, user):
 
     movement = StockMovement(
         product=product,
+        order=order,
         created_by=user,
         quantity_change=quantity_change,
         reason=reason,

@@ -59,7 +59,14 @@
             {% endfor %}
         </tbody>
     </table>
-
+    <p><strong>Order total:</strong> ${{ order_total|floatformat:2 }}</p>
+    {% if order.status == "draft" %}
+        <p>
+            <a href="{% url 'orders:order_confirm' order.pk %}">
+                Confirm order
+            </a>
+        </p>
+    {% endif %}
     <p>
         <a href="{% url 'orders:order_create' %}">
             Create another order

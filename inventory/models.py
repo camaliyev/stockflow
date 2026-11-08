@@ -56,6 +56,13 @@ class StockMovement(models.Model):
         on_delete=models.PROTECT,
         related_name="stock_movements",
     )
+    order = models.ForeignKey(
+        "orders.Order",
+        on_delete=models.PROTECT,
+        related_name="stock_movements",
+        null=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,

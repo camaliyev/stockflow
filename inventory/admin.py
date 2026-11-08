@@ -17,6 +17,8 @@ class ProductAdmin(admin.ModelAdmin):
     )
     search_fields = ("name", "sku")
     list_filter = ("category", "is_active")
+    readonly_fields = ("stock_quantity",)
+    
 
     @admin.display(boolean=True, description="Low Stock")
     def low_stock(self, obj):
