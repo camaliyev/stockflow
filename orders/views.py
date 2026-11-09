@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from .services import add_order_item, update_order_item_quantity, remove_order_item, confirm_order
+from .services import add_order_item, update_order_item_quantity, remove_order_item, confirm_order, cancel_order
 from .forms import OrderForm, OrderItemForm, OrderItemQuantityForm
 from .models import Order, OrderItem
 from decimal import Decimal
@@ -170,6 +170,31 @@ def order_confirm(request, pk):
     return render(
         request,
         "orders/order_confirm.html",
+        {
+            "order": order,
+            "error_message": error_message,
+        },
+    )
+
+@login_required(login_url="/admin/login/")
+def order_cancel(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    error_message = None
+
+    if request.method == "POST":
+        try:
+            cancel_order(
+                order_id=order.pk,
+                user=request.user,
+            )
+        except ValidationError as error:
+            error_message = " ".join(error.messages)
+        else:
+            return redirect("orders:order_detail", pk=order.pk)
+
+    return render(
+        request,
+        "orders/order_cancel.html",
         {
             "order": order,
             "error_message": error_message,

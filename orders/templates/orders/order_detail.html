@@ -67,6 +67,13 @@
             </a>
         </p>
     {% endif %}
+    {% if order.status == "draft" or order.status == "confirmed" %}
+        <p>
+            <a href="{% url 'orders:order_cancel' order.pk %}">
+                Cancel order
+            </a>
+         </p>
+    {% endif %}
     <p>
         <a href="{% url 'orders:order_create' %}">
             Create another order

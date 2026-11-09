@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cancel order | StockFlow</title>
+</head>
+<body>
+    <h1>Cancel Order #{{ order.pk }}</h1>
+
+    <p>Customer: {{ order.customer_name }}</p>
+
+    {% if order.status == "confirmed" %}
+        <p>Cancelling will return this order's quantities to stock.</p>
+    {% elif order.status == "draft" %}
+        <p>This is a draft. Cancelling will not change stock.</p>
+    {% endif %}
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+    {% if order.status == "draft" or order.status == "confirmed" %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Confirm cancellation</button>
+        </form>
+    {% else %}
+        <p>This order is already cancelled.</p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'orders:order_detail' order.pk %}">
+            Back to order
+        </a>
+    </p>
+</body>
+</html>

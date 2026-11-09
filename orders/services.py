@@ -116,3 +116,31 @@ def confirm_order(*, order_id, user):
     order.save(update_fields=["status"])
 
     return order
+
+
+@transaction.atomic
+def cancel_order(*, order_id, user):
+    order = Order.objects.select_for_update().get(pk=order_id)
+
+    if order.status not in (
+        Order.Status.DRAFT,
+        Order.Status.CONFIRMED,
+    ):
+        raise ValidationError("Only draft or confirmed orders can be cancelled.")
+
+    if order.status == Order.Status.CONFIRMED:
+        items = list(order.items.order_by("product_id"))
+
+        for item in items:
+            adjust_stock(
+                product_id=item.product_id,
+                quantity_change=item.quantity,
+                reason=f"Order #{order.pk} cancelled",
+                user=user,
+                order=order,
+            )
+
+    order.status = Order.Status.CANCELLED
+    order.save(update_fields=["status"])
+
+    return order
