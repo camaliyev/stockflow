@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from .services import add_order_item, update_order_item_quantity, remove_order_item, confirm_order, cancel_order
 from .forms import OrderForm, OrderItemForm, OrderItemQuantityForm
 from .models import Order, OrderItem
 from decimal import Decimal
+from .access import orders_visible_to
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_create(request):
     if request.method == "POST":
         form = OrderForm(request.POST)
@@ -27,10 +28,10 @@ def order_create(request):
     )
 
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_detail(request, pk):
     order = get_object_or_404(
-        Order.objects.select_related("created_by"),
+        orders_visible_to(request.user).select_related("created_by"),
         pk=pk,
     )
     items = order.items.select_related("product")
@@ -50,9 +51,12 @@ def order_detail(request, pk):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_item_add(request, pk):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_40(
+        orders_visible_to(request.user),
+        pk=pk,
+    )
 
     if request.method == "POST":
         form = OrderItemForm(request.POST)
@@ -81,9 +85,12 @@ def order_item_add(request, pk):
     )
 
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_item_update(request, pk, item_id):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_404(
+        orders_visible_to(request.user),
+        pk=pk,
+    )
     item = get_object_or_404(
         OrderItem.objects.select_related("product"),
         pk=item_id,
@@ -119,9 +126,12 @@ def order_item_update(request, pk, item_id):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_item_remove(request, pk, item_id):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_404(
+        orders_visible_to(request.user),
+        pk=pk,
+    )
     item = get_object_or_404(
         OrderItem.objects.select_related("product"),
         pk=item_id,
@@ -151,9 +161,12 @@ def order_item_remove(request, pk, item_id):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_confirm(request, pk):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_404(
+        orders_visible_to(request.user),
+        pk=pk,
+    )
     error_message = None
 
     if request.method == "POST":
@@ -176,8 +189,12 @@ def order_confirm(request, pk):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def order_cancel(request, pk):
+    if not request.user.is_staff:
+        raise PermissionDenied(
+            "Only staff members can cancel orders."
+        )
     order = get_object_or_404(Order, pk=pk)
     error_message = None
 

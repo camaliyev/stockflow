@@ -5,16 +5,22 @@ from django.db.models import Q
 from .models import Category, Product
 from .forms import ProductForm, StockAdjustmentForm
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from .services import adjust_stock
 
-@login_required(login_url="/admin/login/")
+@login_required
 def product_list(request):
     search_query = request.GET.get("q", "").strip()
     category_id = request.GET.get("category", "").strip()
 
     categories = Category.objects.all()
     products = Product.objects.select_related("category").all()
+
+    if not request.user.is_staff:
+        products = products.filter(
+            is_active=True,
+            stock_quantity__gt=0,
+        )
 
     if search_query:
         products = products.filter(
@@ -40,7 +46,7 @@ def product_list(request):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def product_detail(request, pk):
     product = get_object_or_404(
         Product.objects.select_related("category"),
@@ -58,8 +64,10 @@ def product_detail(request, pk):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def product_create(request):
+    if not request.user.is_staff:
+        raise PermissionDenied("Only the business admin can manage inventory.")
     if request.method == "POST":
         form = ProductForm(request.POST)
 
@@ -75,8 +83,10 @@ def product_create(request):
         {"form": form},
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def product_update(request, pk):
+    if not request.user.is_staff:
+        raise PermissionDenied("Only the business admin can manage inventory.")
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == "POST":
@@ -97,8 +107,10 @@ def product_update(request, pk):
         },
     )
 
-@login_required(login_url="/admin/login/")
+@login_required
 def stock_adjustment(request, pk):
+    if not request.user.is_staff:
+        raise PermissionDenied("Only the business admin can manage inventory.")
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == "POST":

@@ -6,9 +6,13 @@
 </head>
 <body>
     <h1>StockFlow — Products</h1>
-    <p>
-        <a href="{% url 'inventory:product_create' %}">Add product</a>
-    </p> 
+    {% if request.user.is_staff %}
+        <p>
+            <a href="{% url 'inventory:product_create' %}">
+                Add product
+            </a>
+        </p>
+    {% endif %}
 
     <form method="get" action="{% url 'inventory:product_list' %}">
         <label for="search">Search products:</label>
