@@ -53,7 +53,7 @@ def order_detail(request, pk):
 
 @login_required
 def order_item_add(request, pk):
-    order = get_object_or_40(
+    order = get_object_or_404(
         orders_visible_to(request.user),
         pk=pk,
     )
@@ -106,6 +106,7 @@ def order_item_update(request, pk, item_id):
                     order_id=order.pk,
                     item_id=item.pk,
                     quantity=form.cleaned_data["quantity"],
+                    user=request.user,
                 )
             except ValidationError as error:
                 form.add_error(None, error)

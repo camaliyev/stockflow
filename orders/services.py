@@ -35,25 +35,40 @@ def add_order_item(*, order_id, product_id, quantity):
     return item
 
 @transaction.atomic
-def update_order_item_quantity(*, order_id, item_id, quantity):
+def update_order_item_quantity(*, order_id, item_id, quantity, user):
     order = Order.objects.select_for_update().get(pk=order_id)
 
-    if order.status != Order.Status.DRAFT:
-        raise ValidationError("Only draft orders can be edited.")
+    if not user.is_staff and order.created_by_id != user.pk:
+        raise ValidationError("You cannot edit this order.")
+
+    if order.status == Order.Status.CANCELLED:
+        raise ValidationError("Cancelled orders. cannot be edited.")
+
+    if order.status == Order.Status.CONFIRMED and not user.is_staff:
+        raise ValidationError("Only the business admin can edit confirmed orders.")
 
     if quantity < 1:
         raise ValidationError("Quantity must be at least one.")
 
-    item = OrderItem.objects.get(
-        pk=item_id,
-        order=order,
-    )
+    item = OrderItem.objects.get(pk=item_id, order=order)
 
+    if order.status == Order.Status.CONFIRMED:
+        stock_change = item.quantity - quantity
+
+        if stock_change != 0:
+            adjust_stock(
+                product_id=item.product_id,
+                quantity_change=stock_change,
+                reason=f"Order #{order.pk} quantity updated",
+                user=user,
+                order=order,
+            )
     item.quantity = quantity
     item.full_clean()
     item.save(update_fields=["quantity"])
 
     return item
+
 
 @transaction.atomic
 def remove_order_item(*, order_id, item_id):

@@ -41,11 +41,17 @@
                         {{ item.quantity }}
 
                         {% if order.status == "draft" %}
-                            <a href="{% url 'orders:order_item_update' order.pk item.pk %}">
+                            <a href="{% url 'orders:order_item_update' pk=order.pk item_id=item.pk %}">
                                 Edit quantity
-                             </a>
-                             <a href="{% url 'orders:order_item_remove' order.pk item.pk %}">
-                                 Remove item
+                            </a>
+                        {% elif order.status == "confirmed" and request.user.is_staff %}
+                             <a href="{% url 'orders:order_item_update' pk=order.pk item_id=item.pk %}">
+                                Edit quantity
+                            </a>
+                        {% endif %}
+                        {% if order.status == "draft" %}
+                            <a href="{% url 'orders:order_item_remove' pk=order.pk item_id=item.pk %}">
+                                Remove item
                             </a>
                         {% endif %}
                     </td>
