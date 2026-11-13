@@ -48,20 +48,30 @@ def product_list(request):
 
 @login_required
 def product_detail(request, pk):
-    product = get_object_or_404(
-        Product.objects.select_related("category"),
-        pk=pk
-    )
+    products = Product.objects.select_related("category")
 
-    stock_movements = product.stock_movements.select_related("created_by")
+    if not request.user.is_staff:
+        products = products.filter(
+            is_active=True,
+            stock_quantity__gt=0,
+        )
+
+    product = get_object_or_404(products, pk=pk)
+
+    stock_movements = None
+
+    if request.user.is_staff:
+        stock_movements = product.stock_movements.select_related(
+            "created_by"
+        )
 
     return render(
         request,
         "inventory/product_detail.html",
         {
-            "product": product, 
-            "stock_movements": stock_movements
-        },
+            "product": product,
+            "stock_movements": stock_movements,
+        }
     )
 
 @login_required

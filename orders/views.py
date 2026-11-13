@@ -217,3 +217,13 @@ def order_cancel(request, pk):
             "error_message": error_message,
         },
     )
+
+@login_required
+def order_list(request):
+    orders = orders_visible_to(request.user).select_related("created_by")
+
+    return render(
+        request,
+        "orders/order_list.html",
+        {"orders": orders},
+    )

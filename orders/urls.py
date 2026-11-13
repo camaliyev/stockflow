@@ -12,4 +12,5 @@ urlpatterns = [
     path("<int:pk>/items/<int:item_id>/remove/", views.order_item_remove, name="order_item_remove"),
     path("<int:pk>/confirm/", views.order_confirm, name="order_confirm"),
     path("<int:pk>/cancel/", views.order_cancel, name="order_cancel"),
+    path("", views.order_list, name="order_list"),
 ]
