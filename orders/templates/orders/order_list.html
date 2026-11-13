@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders | StockFlow</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Orders | StockFlow{% endblock %}
+
+{% block content %}
     <h1>
         
         {% if request.user.is_staff %}
@@ -14,12 +11,6 @@
             My orders
         {% endif %}
     </h1>
-    <p>Logged in as: {{ request.user.username }}</p>
-
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Log out</button>
-    </form>
 
     <p>
         <a href="{% url 'orders:order_create' %}">Create new cart</a>
@@ -59,5 +50,4 @@
             Browse products
         </a>
     </p>
-</body>
-</html>
+{% endblock %}

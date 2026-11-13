@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Products | StockFlow</title>
+    {% extends "base.html" %}
 
-</head>
-<body>
+    {% block title %}Products | StockFlow{% endblock %}
+
+    {% block content %}
     <h1>StockFlow — Products</h1>
-    <p>Logged in as: {{ request.user.username }}</p>
-
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Log out</button>
-    </form>
     {% if request.user.is_staff %}
         <p>
             <a href="{% url 'inventory:product_create' %}">
@@ -88,5 +79,4 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+{% endblock %}

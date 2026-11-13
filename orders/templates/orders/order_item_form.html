@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add item | StockFlow</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}StockFlow{% endblock %}
+
+{% block content %}
     <h1>Add item to Order #{{ order.pk }}</h1>
 
     <p>Customer: {{ order.customer_name }}</p>
@@ -21,5 +19,4 @@
             Back to order
         </a>
     </p>
-</body>
-</html>
+{% endblock %}
