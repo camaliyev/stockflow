@@ -7,12 +7,19 @@
 </head>
 <body>
     <h1>
+        
         {% if request.user.is_staff %}
             All orders
         {% else %}
             My orders
         {% endif %}
     </h1>
+    <p>Logged in as: {{ request.user.username }}</p>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
 
     <p>
         <a href="{% url 'orders:order_create' %}">Create new cart</a>
